@@ -1,0 +1,242 @@
+---
+title: 'CIND 123 - Data Analytics: Basic Methods'
+author: Zhila Mofidi
+output:
+  html_document: default
+---
+<center> <h1> Assignment 1 (10%) </h1> </center>
+<center>  <h3> [Zhila Mofidi] </h2> </center>
+<center> <h3> [Section DK0] </h2> </center>
+
+<style>
+body {
+    position: absolute;
+    left: 0px;}
+</style>
+---
+# Instructions 
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. Review this website for more details on using R Markdown <http://rmarkdown.rstudio.com>.
+
+Use RStudio for this assignment. Complete the assignment by inserting your  \texttt{R} code wherever you see the string "#INSERT YOUR ANSWER HERE".
+
+When you click the **Knit** button, a document (PDF, Word, or HTML format) will be generated that includes both the assignment content as well as the output of any embedded R code chunks.
+
+**NOTE**: YOU SHOULD NEVER HAVE `install.packages` IN YOUR CODE; OTHERWISE, THE `Knit` OPTION WILL GIVE AN ERROR. COMMENT OUT ALL PACKAGE INSTALLATIONS.
+
+Submit **both**  the `rmd` and generated `output` files. Failing to submit both files will be subject to mark deduction. PDF or HTML is preferred. 
+
+## Sample Question and Solution
+
+Use `seq()` to create the vector $(3,5\ldots,29)$.
+
+```{r}
+seq(3, 30, 2)
+seq(3, 29, 2)
+```
+
+## Question 1 (32 points)
+
+## Q1a (8 points)
+Create and print a vector `x` with all integers from 15 to 100 and a vector `y` containing multiples of 5 in the same range. Hint: use `seq()`function. Calculate the difference in lengths of the vectors `x` and `y`. 
+Hint: use length()
+
+```{r}
+
+x<- 15:100
+x
+y<-seq(15,100,by=5)
+y
+length(x)
+length(y)
+length(x)-length(y)
+
+```
+
+## Q1b (8 points)
+Create a new vector, `x_square`, with the square of elements at indices 1, 11, 21, 31, 41, 51, 61, and 71 from the variable `x`. Hint: Use indexing rather than a `for` loop. Calculate the mean and median of the FIRST five values from `x_square`.
+```{r}
+x<-c(1,11,21,31,41,51,61,71)
+x_square<- x^2
+x_square
+mean(x_square[1:5])
+median(x_square[1:5])
+
+
+```
+
+## Q1c (8 points)
+For a given factor variable of `factorVar <- factor(c(10.8, 2.7, 5.0, 3.5))`. To convert the factor to number, you need to either:
+1) use `level()` to extract the level labels, then use `as.numeric()` to convert the labels to numbers, or
+2) use `as.charactor()` to convert the values in the factorVar, then use `as.numeric()` to convert the values to numbers
+
+Please provide both solutions
+
+```{r}
+#solution 1
+factorVar<- c(10.8,2.7,5.0,3.5)
+factorVar <- factor(factorVar,levels=c(10.8,2.7,5.0,3.5))
+factorVar <-as.numeric(c(10.8,2.7,5.0,3.5))
+factorVar
+class(factorVar)
+
+#solution 2
+
+factorVar<- factor(c(10.8,2.7,5.0,3.5))
+factorVar <- as.numeric(as.character(factorVar))
+factorVar
+
+class(factorVar)
+
+
+```
+
+## Q1d (8 points)
+A comma-separated values file `dataset.csv` consists of missing values represented by Not A Number (`null`) and question mark (`?`). How can you read this type of files in R? 
+NOTE: Please make sure you have saved the `dataset.csv` file at your current working directory.
+```{r}
+### read.csv(dataset.csv,na.strings=c("?","Nan"))
+getwd()
+```
+
+# Question 2 (32 points)
+
+## Q2a (8 points)
+Compute: $$\frac{1}{4!} \sum_{n=10}^{40}3^{n}$$
+Hint: Use `factorial(n)` to compute $n!$.
+```{r}
+n<-10:40
+sum((3^n)/factorial(4))
+
+
+```
+
+## Q2b (8 points)
+Compute: $$\prod_{n=1}^{20} \left( 3n + \frac{1}{n} \right)$$
+NOTE: The symbol $\Pi$ represents multiplication.
+```{r}
+n<-1:20
+prod((3*n)+(1/n))
+
+
+```
+
+## Q2c (8 points)
+Describe what the following R command does:
+`c(0:5)[NA]`
+```{r}
+####Using the following commands, you can create a vector with a length of six. Each element in the vector can be accessed by its position or index, indicated by square brackets. In this case, we are indexing the NA number of the vector but since the index of Na does not exist, we get NA 6 times (length of vector).#####
+
+
+  Vector <-c(0:5)[NA]
+Vector
+```
+
+## Q2d (8 points)
+Describe the purpose of `is.vector()`, `is.character()`, `is.numeric()`, and `is.na()` functions? Please use `x <- c("a","b",NA,2)` to explain your description.
+```{r}
+##### If the argument passed to is. numeric() is a type of numeric data such as a double or integer, it returns TRUE, otherwise it returns FALSE.
+
+ ###### If the object has no attributes or only the name attribute, is.vector() returns TRUE, otherwise, it returns FALSE.
+
+###### If the object is a character type, then is.vector() returns TRUE, otherwise it returns FALSE.
+
+######  If there are missing values in a dataset, the is. na ( ) function returns True, otherwise it returns False.
+
+x <- c("a","b",NA,2)
+
+is.numeric(x)
+
+
+is.vector(x)
+
+is.na(x)
+
+
+is.character(x)
+
+```
+
+# Question 3 (36 points)
+The `airquality` dataset contains daily air quality measurements in New York from May to September 1973. The variables include Ozone level, Solar radiation, wind speed, temperature in Fahrenheit, month, and day. Please see the detailed description using `help("airquality")`.
+
+Install the `airquality` data set on your computer using the command `install.packages("datasets")`. Then load the `datasets` package into your session.
+```{r}
+library(datasets)
+
+```
+
+## Q3a (4 points)
+Display the first 6 rows of the `airquality` data set.
+```{r}
+head(airquality)
+     
+
+```
+
+## Q3b (8 points)
+Compute the average of the first four variables (Ozone, Solar.R, Wind and Temp) for the fifth month using the `sapply()` function.
+Hint: You might need to consider removing the `NA` values; otherwise, the average will not be computed. 
+```{r}
+### the average of the first four variables###
+
+colMeans(airquality[1:4],na.rm=T)
+
+###fifth month using the sapply()####
+
+sapply(airquality[5],mean)
+```
+
+## Q3c (8 points)
+Construct a boxplot for the all `Wind`  and `Temp` variables, then display the values of all the outliers which lie beyond the whiskers.
+```{r}
+### Box Plot Of Wind###
+
+
+thewind<- boxplot(airquality$Wind,main="BOX PLOT OF WIND")
+thewind
+### display the value of outliers####
+thewind$out
+### Box Plot Of Temp ###
+thetemp <- boxplot(airquality$Temp,main="BOX PLOT OF Temp")
+thetemp
+### ### display the value of outliers###
+thetemp$out
+```
+## Q3d (8 points)
+Compute the upper quartile of the `Wind` variable with two different methods.
+HINT: Only show the upper quartile using indexing. For the type of quartile, please see https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/quantile.
+```{r}
+### upper quartile of the Wind###
+
+###solution 1
+
+data <-airquality$Wind
+quantile(data,prob=0.75,na.rm=T)
+
+### solution 2
+
+upper_quartile<- summary(airquality$Wind)[5]
+upper_quartile
+
+```
+
+## Q3e (8 points)
+Construct a pie chart to describe the number of entries by `Month`.
+HINT: use the `table()` function to count and tabulate the number of entries within a `Month`.
+```{r}
+###I Identify  which  months exist in the dataset ####
+airquality$Month
+
+#### I created a vector indicates the names of the months from May to September.
+vect_month<- c("may(5)","June(6)","July(7)","Auguest(8)","September(9)")
+
+month_table<-table(airquality$Month)
+rownames(month_table)<- vect_month
+
+month_table
+
+pie(month_table,main="Pie Chart Of Months")
+```
+END of Assignment #1.
