@@ -1,0 +1,256 @@
+---
+title: "CIND 123: Data Analytics Basic Methods: Assignment-3_F2022"
+output: html_document
+---
+<center> <h1> Assignment 3 (10%) </h1> </center>
+<center> <h2> Total 100 Marks </h2> </center>
+<center> <h3> [Zhila Mofidi] </h3> </center>
+<center> <h3> [DK0] </h3> </center>
+---
+
+
+# Instructions 
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. Review this website for more details on using R Markdown <http://rmarkdown.rstudio.com>.
+
+Use RStudio for this assignment. Complete the assignment by inserting your  \texttt{R} code wherever you see the string "#INSERT YOUR ANSWER HERE".
+
+When you click the **Knit** button, a document (PDF, Word, or HTML format) will be generated that includes both the assignment content as well as the output of any embedded R code chunks.
+
+**NOTE**: YOU SHOULD NEVER HAVE `install.packages` IN YOUR CODE; OTHERWISE, THE `Knit` OPTION WILL GIVE AN ERROR. COMMENT OUT ALL PACKAGE INSTALLATIONS.
+
+Submit **both**  the `rmd` and generated `output` files. Failing to submit both files will be subject to mark deduction. PDF or HTML is preferred. 
+
+## Sample Question and Solution
+
+Use `seq()` to create the vector $(3, 5, \dots, 29)$.
+
+```{r}
+seq(3, 30, 2)
+seq(3, 29, 2)
+```
+
+
+
+# Question 1 [30 Pts]
+
+## Q1a (10 points) 
+
+Suppose you have a dataset with two variables, age (c(41, 56, 45, 65, 25, 70, 30, 33, 60, 35)) and income (c(93000, 110000, 80000, 125000, 40000, 145000, 78000, 51000, 110000, 69000)), for a sample of 10 individuals. The `age` variable represents the age of the individual, while the `income` variable represents their annual income. Set variables age and income respectively. Then find the least-squares line relating the `age` to the `income`. 
+
+Does the assumption of a linear relationship appear to be reasonable in this case? Give reasons for your answer as a comment.
+```{r}
+age <- c(41, 56, 45, 65, 25, 70, 30, 33, 60, 35)
+income <- c(93000, 110000, 80000, 125000, 40000, 145000, 78000, 51000, 110000, 69000)
+dataset <- data.frame(age,income)
+dataset
+model <- lm(income ~ age,data=dataset)
+model 
+summary(model)
+#######Does the assumption of a linear relationship appear to be reasonable in this case? 
+
+#Income = -835.0 + 1976.8 * age
+###This linear regression model shows a positive relationship between age and income. The coefficient for age is estimated to be 1976.8, meaning that for every one-year increase in age, income increases by $1,976.8 so age is a significant predictor of income. The intercept of this model is -835.0.  In the context of the data, a negative intercept of -835 implies that income is negative for newborns and people at age 0.This model assumes a linear relationship between income and age, which might not be appropriate in every case.It is important  to consider additional factors that may affect the relationship between age and income.
+
+
+```
+
+## Q1b (10 points) 
+Plot the income as a function of age using a scatterplot and draw the least-square line on the same plot. 
+```{r}
+plot(age,income, pch=15,
+xlab="age",
+ylab="income",
+main="age of individuals and income")
+abline(coefficients(model), lwd=3, lty=3, col="pink")
+
+
+
+```
+
+## Q1c (10 points) 
+Use the regression line to predict the income when the age is 38. 
+```{r}
+age_predict <-38
+#income_predict<- intercept+slope*age_predict
+#income_predict
+
+income_predict<- -835.00+1976.8*38
+income_predict
+
+
+
+```
+
+
+
+# Question 2 [45 Pts]
+
+Please load the OpenIntro Statistics Dataset - loans_full_schema data by running the following chunk of code.
+
+You can read more about at this link:
+   - https://r-data.pmagunia.com/dataset/openintro-statistics-dataset-loansfullschema
+   - https://www.openintro.org/data/index.php?data=loans_full_schema
+```{r load_data}
+OpenIntro = read.csv("https://r-data.pmagunia.com/system/files/datasets/dataset-100644960.csv")
+
+```
+
+## Q2a (5 points) 
+Display the first 5 rows of the `OpenIntro` data, the names of all the variables, and a descriptive summary of each variable. 
+```{r}
+
+head(OpenIntro, n=5)
+
+# Print the names of all the variables
+ names(OpenIntro)
+
+# Print a descriptive summary of each variable
+ summary(OpenIntro)
+
+
+```
+
+
+## Q2b-1 (10 points) 
+Use annual income (`annual_income`), the length of the loan (`term`), interest rate (`interest_rate`), and loan ammount (`loan_amount`) to build a linear regression model to predict Monthly payment for the loan the applicant received. (`installment`).  
+
+
+#   The formula is :
+  
+  installment = intercept + (coefficient_loan_amount * loan_amount) + (coefficient_term* term) + (coefficient_interest_rate * interest_rate) + (coefficient_annual_income * annual_income)
+
+
+#   The model in R:
+
+model <- lm(installment ~ annual_income + term + interest_rate + loan_amount, data=OpenIntro)
+ 
+model
+
+
+
+
+## Q2b-2 (5 points) 
+How can you draw a conclusion from the results? 
+   (Note: Full marks requires comment on the predictors)
+```{r}
+model <- lm(installment ~ annual_income + term + interest_rate + loan_amount, data=OpenIntro)
+ 
+model
+
+#installment = intercept + (coefficient_loan_amount * loan_amount) + (coefficient_term* term) + (coefficient_interest_rate * interest_rate) + (coefficient_annual_income * annual_income)
+
+#So in this case, all four predictors have p-values < 0.05, indicating that they are statistically significant predictors of installment.
+
+
+```
+
+## Q2c (10 points) 
+
+Based on the output of your model, write an equation using the intercept and coefficients of `loan_amount`, `term`, `interest_rate`, and `annual_income`. Then, use the equation for a case with `loan_amount` of 24000, `term` of 36, `interest_rate` of 6.72, and `annual_income` of 90000 to predict their `installment`.  You are not allowed to use `predict` function for this task.
+
+```{r}
+
+installment = -273.94 + (0.0948 * 24000) + (24.72 * 36) + (24.38 * 6.72) + (0.0021 * 90000)
+#installment = $507.15
+
+```
+
+## Q2d-1 (10 points) 
+Display the correlation matrix of the following variables: 
+- installment (`installment`), 
+- loan amount (`loan_amount`),
+- salary (`annual_income`),
+- term (`term`),
+- total credit limit (`total_credit_limit`). 
+
+
+OpenIntro = read.csv("https://r-data.pmagunia.com/system/files/datasets/dataset-100644960.csv")
+
+# Select the variables
+vars <- c("installment", "loan_amount", "annual_income", "term", "total_credit_limit")
+data <- OpenIntro[vars]
+
+# correlation matrix
+cor_matrix <- cor(data)
+
+# Display the correlation matrix
+print(cor_matrix)
+
+
+
+## Q2d-2 (5 points) 
+Write what conclusion you can draw, as comments. 
+   (answer not included, Please grade on student's comments)
+```{r}
+OpenIntro = read.csv("https://r-data.pmagunia.com/system/files/datasets/dataset-100644960.csv")
+
+# Select the variables
+vars <- c("installment", "loan_amount", "annual_income", "term", "total_credit_limit")
+data <- OpenIntro[vars]
+
+# correlation matrix
+cor_matrix <- cor(data)
+
+# Display the correlation matrix
+print(cor_matrix)
+
+
+#here we see that the installment and loan_amount variables have a very strong positive correlation (0.95), which makes sense since larger loans will generally have larger payments. The annual_income and total_credit_limit variables also have a moderate positive correlation (0.78), which makes sense since people with higher incomes may be approved for higher credit limits. The other variables have weaker correlations with each other.
+ 
+
+
+```
+
+
+
+## Question 3 [25 Pts]
+
+This question makes use of package "ISwR". Please load `airquality` dataset as following:
+
+```{r}
+# or install.packages("ISwR")
+library(ISwR) 
+data(airquality)
+str(airquality)
+```
+
+
+## Q3a (10 points) 
+Use a histogram with `20` breaks to assess the normality of the `Temp` variable, then explain why it appears (to some extent) normally distributed. 
+```{r}
+library(ISwR)
+data(airquality)
+# Create a histogram of the Temp variable with 20 breaks
+hist(airquality$Temp, breaks = 20)
+
+##To explain why it appears (to some extent) normally distributed, we can look at the histogram shape. The histogram appears roughly symmetrical, with a bell-shaped curve, which is characteristic of a normal distribution. Additionally, the histogram has no apparent outliers or skewness, which indicates normality.
+
+
+
+```
+
+## Q3b (15 points) 
+Create a comparison boxplot that shows the distribution of `Wind` in each month. Use different colours for each month. 
+
+```{r}
+
+# in order to create a comparison boxplot that shows the distribution of Wind in each month,I  used the ggplot2 package 
+
+library(ggplot2)
+
+# create the boxplot
+
+ggplot(airquality, aes(x = factor(Month), y = Wind, fill = factor(Month))) +
+  geom_boxplot() +
+  scale_fill_discrete(name = "Month") +
+  labs(x = "Month", y = "Wind (mph)") +
+  theme_bw()
+
+```
+
+
+
+
+** End of Assignment **
