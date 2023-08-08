@@ -1,0 +1,264 @@
+---
+title: 'CIND 123 - Data Analytics: Basic Methods'
+author: "zhila Mofidi"
+date: 22 March 2023
+output:
+  html_document: default
+  pdf_document: default
+---
+<center> <h1> Assignment 2 (10%) 
+<center> <h3> [Zhila Mofidi] 
+<center> <h3> [DK0] 
+---
+
+# Instructions 
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. Review this website for more details on using R Markdown <http://rmarkdown.rstudio.com>.
+
+Use RStudio for this assignment. Complete the assignment by inserting your  \texttt{R} code wherever you see the string "#INSERT YOUR ANSWER HERE".
+
+When you click the **Knit** button, a document (PDF, Word, or HTML format) will be generated that includes both the assignment content as well as the output of any embedded R code chunks.
+
+**NOTE**: YOU SHOULD NEVER HAVE `install.packages` IN YOUR CODE; OTHERWISE, THE `Knit` OPTION WILL GIVE AN ERROR. COMMENT OUT ALL PACKAGE INSTALLATIONS.
+
+Submit **both**  the `rmd` and generated `output` files. Failing to submit both files will be subject to mark deduction.  
+
+## Sample Question and Solution
+
+Use `seq()` to create the vector $(100, 97, \dots, 4)$.
+
+```{r}
+seq(100, 3, -3)
+```
+
+
+# Question 1 (40 points)
+
+The Titanic Passenger Survival Data Set provides information on the fate of passengers on the fatal maiden voyage of the ocean liner "Titanic." The dataset is available from the Department of Biostatistics at the Vanderbilt University School of Medicine (https://biostat.app.vumc.org/wiki/pub/Main/DataSets/titanic3.csv) in several formats. store the Titanic Data Set into the variable `titanic_train` using the following commands. 
+
+
+```{r}
+titanic_train <- read.csv(file="https://biostat.app.vumc.org/wiki/pub/Main/DataSets/titanic3.csv",stringsAsFactors = F)
+summary(titanic_train)
+str(titanic_train)
+
+```
+
+1.a) Extract the columns  `cabin`, `ticket`, `embarked`,  `name` into a new data frame named `titanicSubset` and show its `head`. 
+
+(5 points)
+
+```{r}
+titanicSubset <-titanic_train[ , c("cabin", "ticket", "embarked","name" )]
+head(titanicSubset)
+```
+
+1.b) 
+Categorical data: Use the `hist()`  function to display the histogram of the `age` of passengers.    
+
+(5 points)
+```{r}
+hist_age <- titanic_train$age
+ hist (hist_age)
+```
+
+
+1.c) Pivot Table: In a data frame, show the number of survived/not survived people per gender. In other words, the table should have three columns: `sex`, `survived`, and `n` (i.e., the count per each case).
+
+HINT: Use `count()` and `group_by()` functions from the `dplyr` package to calculate the number of survived/not survived cases by `sex`. `group_by()` should be used first and then pipe `%>%`the result to `count()` to calculate the output. 
+
+(5 points)
+```{r}
+library(dplyr)
+
+titanic_subset <- titanic_train %>%
+
+group_by(sex, survived) %>%
+
+count()
+
+ titanic_subset
+```
+
+
+1.d) Use the aggregate() function to calculate the 'survivalCount' of each `sex` and calculate the survival rate of each sex (i.e., the percentage of survived people per gender). Then draw the conclusion on which sex has the higher survival rate. 
+
+OPTIONAL: try to do the same task using `group_by`, `summarize`, and `mean`.
+
+ (5 points)
+```{r}
+### number of survived people by sex using aggregate function 
+survivalCount <- aggregate (survived ~ sex, data = titanic_train, FUN = sum)
+print(survivalCount)
+```
+```{r}
+###calculate the survival rate of each sex by using `group_by`, `summarize`, and `mean` functions 
+survival_summary <- titanic_train %>% 
+group_by(sex) %>%
+summarize(survivalCount = sum(survived), survivalRate = mean(survived) *100)
+
+ print(survival_summary)
+
+#### result shows that female has  higher survival rate 72.74%
+```
+
+
+1.e) Using boxplot to display the distribution of `age` for each class (`pclass`) and infer which class is the wealthiest.
+
+(5 points)
+```{r}
+ ##### Create a boxplot of age for each class
+ boxplot(age ~ pclass, data = titanic_train,
+
+main = "distribution of age ",
+xlab = "passenger class", ylab = "age")
+
+```
+
+
+1.f)
+Calculate the average fare per class and describe if the calculation agrees with the box plot.
+
+ (5 points)
+```{r}
+
+# Calculate the average fare per class
+aggregate (fare ~ pclass, data = titanic_train, FUN = mean)
+### result shows that first class passengers paid a higher fare so they are wealthiest.
+```
+
+
+1.g) Use the `for` loop and `if` control statements to list the women's names whose ages are less than 30  that embarked from `C` (Cherbourg) on the Titanic. 
+
+ (10 points)
+```{r}
+
+titanic_train <- read.csv(file="https://biostat.app.vumc.org/wiki/pub/Main/DataSets/titanic3.csv",stringsAsFactors = F)
+
+for (i in 1:nrow(titanic_train)){
+  if (!is.na(titanic_train$age[i]) & !is.na(titanic_train$embarked[i]) & !is.na(titanic_train$sex[i]) &
+      titanic_train$age[i] < 30 & titanic_train$embarked[i] == "C" & titanic_train$sex[i] == "female") {
+    print(titanic_train$name[i])
+  }
+}
+
+
+
+    
+
+  
+
+
+```
+
+
+
+# Question 2 (20 points)
+
+50 engines work together in a sequence. The historical data shows that the probability of each engine's failure is 0.15. We know that if one engine fails, the whole system stops.
+
+2.a)  What is the probability that the system operates without failure? 
+
+(5 points)
+```{r}
+dbinom(50,50,0.85)
+```
+
+2.b) Use the Binomial approximation to calculate the probability that at least 10 engines are defective?--- Please check
+
+(5 points)
+```{r}
+pbinom(10,50,0.15,lower.tail = F)
+```
+
+2.c) What is the probability that the second engine (B) is defective P(B|A) given the first engine (A) is not defective  and the first and second engines are independent. 
+
+(10 points)
+```{r}
+### first engine
+1-pbinom(1,50,0.15) 
+## second engine
+pbinom (2,50,0.15)
+
+### the probability that first engine is NOT defective and the second one is defective  lies between 0.9970945 and 0.01418852
+```
+
+# Question 3 (25 points)
+
+On average, Sarah visits her parents five times a week. 
+
+3.a) Find the probabilities that she visits her parents at most 3 times a week? 
+
+(5 points)
+```{r}
+ ppois (3, lambda = 5)
+```
+
+
+3.b) Find the probability that Sarah visits her parents at least twice a week? --- Correction
+
+(5 points)
+```{r}
+
+1 - ppois(2, lambda = 5)
+```
+
+
+3.c)
+Comparing the similarity between Binomial and Poisson distribution.
+
+1) Create 55,000 samples for a Binomial random variable using parameters described in Question 2.
+
+2) Create 55,000 samples for a Poisson random variable using parameters described in Question 3.
+
+3) Illustrate how well the Poisson probability distribution approximates the Binomial probability distribution.
+
+HINT: You may use `multhist()` from the `plotrix` package to show their histogram next to each other, or you can create two separate histogram plots with the same x and y axis ranges. 
+
+(15 points@ 5 points each)
+```{r}
+engine<-rbinom (55000,50, 0.15)
+visit<-rpois (55000,5)
+library(plotrix)
+ set.seed(1)
+ dists<-list(engine,visit)
+multhist(dists)
+
+
+```
+
+
+
+
+# Question 4 (15 points)
+
+Write scripts in $\texttt{R}$ to compute the following probabilities of a random variable following the normal distribution with the mean of 12 and the variance of 25
+
+4.a) The probability that it lies between 8.2 and 11.2 (inclusive)
+
+(5 points)
+```{r}
+ pnorm(11.2,12,5) - pnorm(8.2,12,5)
+```
+
+
+4.b) The probability that it is greater than 12.0
+
+(5 points)
+```{r}
+
+1-pnorm(12, 12,5)
+
+```
+
+
+4.c) The probability that it is less than 7.5 or greater than 12.5
+
+(5 points)
+```{r}
+
+pnorm(7.5,12,5)+ 1-pnorm(12.5,12,5)
+```
+
+
+END of Assignment #2.
